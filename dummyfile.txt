@@ -1,0 +1,36 @@
+<script src="lib/jquery/dist/jquery.min.js"></script>
+<script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="lib/angular/angular.min.js"></script>
+<script src="lib/angular-route/angular-route.min.js"></script>
+<script src="src/app.js"></script>
+<script src="src/controllers.js"></script>
+<script src="src/factories.js"></script>
+<script src="src/filters.js"></script>
+
+angular.module('ContactsApp', ['ngRoute'])
+.controller('ListController',function ($scope, ContactService) {
+  console.log('In controller');
+  $scope.empDetails = ContactService.empDetails();
+  // console.log($scope.empDetails);
+})
+
+.service('ContactService', function($scope, $http){
+  console.log('In service');
+  var empDetails = function(){
+    $scope.data = undefined;
+    $http({
+      method: 'POST',
+      url: 'php/middleware.php',
+      data: $.param({
+        "flag":"populateEmployeeDetails",
+      }),
+      headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'}
+    }).then(function(response){
+      $scope.data = response.data;
+      console.log($scope.data);
+    }, function(error) {
+      $scope.data = error;
+    });
+    return $scope.data;
+  }
+});
